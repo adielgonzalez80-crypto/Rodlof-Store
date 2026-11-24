@@ -9,6 +9,7 @@ let isAdmin = localStorage.getItem("rodlof-admin") === "true";
 function updateAdminUI() {
   const uploadSection = document.getElementById("upload");
   const adminBtn = document.getElementById("adminBtn");
+  if (!uploadSection || !adminBtn) return;
   if (isAdmin) {
     uploadSection.style.display = "block";
     adminBtn.textContent = "Salir Admin";
@@ -20,7 +21,6 @@ function updateAdminUI() {
   }
 }
 
-// Esperar a que todo esté listo
 function init() {
   const adminBtn = document.getElementById("adminBtn");
   if (adminBtn) {
@@ -30,28 +30,24 @@ function init() {
         isAdmin = false;
         localStorage.removeItem("rodlof-admin");
         alert("Sesión de admin cerrada");
+        updateAdminUI();
+        if (typeof renderAll === 'function') renderAll();
       } else {
-        const pass = prompt("Clave de administrador:");
+        const pass = window.prompt("Clave de administrador:");
         if (pass === "rodlof2026") {
           isAdmin = true;
           localStorage.setItem("rodlof-admin", "true");
           alert("Modo Admin activado");
-        } else if (pass) {
+          updateAdminUI();
+          if (typeof renderAll === 'function') renderAll();
+        } else if (pass !== null && pass !== "") {
           alert("Clave incorrecta");
         }
       }
-      updateAdminUI();
-      if (typeof renderAll === 'function') renderAll();
     };
   }
   if (typeof loadApps === 'function') loadApps();
   updateAdminUI();
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
 }
 
 async function loadApps() {
@@ -62,7 +58,8 @@ async function loadApps() {
 
   if (error) {
     console.error(error);
-    document.getElementById("appsGrid").innerHTML = "<p style='color:#64748b'>Error al cargar apps</p>";
+    const grid = document.getElementById("appsGrid");
+    if (grid) grid.innerHTML = "<p style='color:#64748b'>Error al cargar apps</p>";
     return;
   }
 
@@ -72,13 +69,14 @@ async function loadApps() {
 
 function renderItems(items, containerId, isGame = false) {
   const container = document.getElementById(containerId);
+  if (!container) return;
   if (!items.length) {
     container.innerHTML = `<p style="color:#64748b;grid-column:1/-1">Aún no hay ${isGame ? "juegos" : "aplicaciones"}.</p>`;
     return;
   }
   container.innerHTML = items.map(item => `
     <div class="app-card ${isGame ? "game-card" : ""}" onclick="showDetails('${item.id}')">
-      <div class="app-icon" id="icon-${item.id}">
+      <div class="app-icon">
         ${item.icon_url ? `<img src="${item.icon_url}" style="width:100%;height:100%;object-fit:cover;border-radius:16px">` : (item.icon || (isGame ? "🎮" : "📱"))}
       </div>
       <h3>${item.name}</h3>
@@ -89,7 +87,8 @@ function renderItems(items, containerId, isGame = false) {
 }
 
 function renderAll() {
-  const query = document.getElementById("searchInput").value.toLowerCase();
+  const search = document.getElementById("searchInput");
+  const query = search ? search.value.toLowerCase() : "";
   const filtered = allItems.filter(i => i.name.toLowerCase().includes(query) || (i.category || "").toLowerCase().includes(query));
   const apps = filtered.filter(i => i.type !== "game");
   const games = filtered.filter(i => i.type === "game");
@@ -199,7 +198,7 @@ document.getElementById("uploadForm").onsubmit = async (e) => {
   if (!apkFile) return;
 
   if (apkFile.size > 50 * 1024 * 1024) {
-    status.textContent = "Error: El APK supera los 50 MB (límite del plan gratuito)";
+    status.textContent = "Error: El APK supera los 50 MB";
     status.style.color = "#ea4335";
     return;
   }
@@ -221,25 +220,14 @@ document.getElementById("uploadForm").onsubmit = async (e) => {
         contentType: iconFile.type || "image/png",
         upsert: true
       });
-      if (iconError) {
-        console.warn("Error subiendo icono:", iconError);
-      } else {
+      if (!iconError) {
         const { data: iconUrlData } = supabase.storage.from("apps").getPublicUrl(iconName);
         icon_url = iconUrlData.publicUrl;
       }
     }
 
     const { error: dbError } = await supabase.from("apps").insert({
-      name,
-      type,
-      developer,
-      category,
-      description,
-      icon: iconEmoji,
-      icon_url,
-      apk_url,
-      price,
-      currency
+      name, type, developer, category, description, icon: iconEmoji, icon_url, apk_url, price, currency
     });
 
     if (dbError) throw dbError;
@@ -256,7 +244,14 @@ document.getElementById("uploadForm").onsubmit = async (e) => {
 };
 
 document.getElementById("searchInput").oninput = renderAll;
-document.querySelector(".close").onclick = () => document.getElementById("modal").classList.remove("show");
+const closeBtn = document.querySelector(".close");
+if (closeBtn) closeBtn.onclick = () => document.getElementById("modal").classList.remove("show");
 document.getElementById("modal").onclick = (e) => {
   if (e.target.id === "modal") document.getElementById("modal").classList.remove("show");
 };
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
