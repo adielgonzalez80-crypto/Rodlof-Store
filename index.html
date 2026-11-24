@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rodlof Studios - Tienda de Apps</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <div class="logo-icon">R</div>
+        <span>Rodlof Studios</span>
+      </div>
+      <div class="search-container">
+        <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar apps y juegos...">
+      </div>
+      <nav>
+        <a href="#apps" class="active">Apps</a>
+        <a href="#games">Juegos</a>
+        <a href="#upload" class="upload-nav">Subir</a>
+        <a href="#" id="adminBtn">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="hero">
+      <h1>Rodlof Studios</h1>
+      <p>Apps y juegos de Rodlof Game Studio</p>
+    </div>
+
+    <section id="upload" class="card upload-card" style="display:none">
+      <h2>Subir nueva aplicación</h2>
+      <p class="subtitle">Límite: 50 MB por archivo · Plan gratuito de Supabase</p>
+      <form id="uploadForm">
+        <div class="grid-2">
+          <input type="text" name="name" placeholder="Nombre de la app *" required>
+          <select name="type">
+            <option value="app">Rodlof Studios Apps</option>
+            <option value="game">Rodlof Game Studio</option>
+          </select>
+        </div>
+        <div class="grid-2">
+          <input type="text" name="developer" placeholder="Desarrollador" value="Rodlof Studios">
+          <input type="text" name="category" placeholder="Categoría">
+        </div>
+        <div class="grid-2">
+          <input type="number" name="price" placeholder="Precio (0 = Gratis)" step="0.01" min="0" value="0">
+          <input type="text" name="currency" placeholder="Moneda" value="USD">
+        </div>
+        <textarea name="description" placeholder="Descripción de la app" rows="3"></textarea>
+        <input type="text" name="icon" placeholder="Emoji (opcional)" value="📱">
+        <label class="file-label">
+          <input type="file" name="iconFile" accept="image/*">
+          <span>📷 Subir icono de la app</span>
+        </label>
+        <label class="file-label">
+          <input type="file" name="apk" accept=".apk" required>
+          <span>📦 Seleccionar archivo APK (máx 50 MB)</span>
+        </label>
+        <button type="submit" class="btn primary">Subir APK</button>
+        <div id="uploadStatus"></div>
+      </form>
+    </section>
+
+    <section id="apps">
+      <div class="section-title">
+        <h2>Rodlof Studios Apps</h2>
+        <span class="badge blue">Aplicaciones</span>
+      </div>
+      <div class="app-grid" id="appsGrid"></div>
+    </section>
+
+    <section id="games">
+      <div class="section-title">
+        <h2>Rodlof Game Studio</h2>
+        <span class="badge red">Juegos</span>
+      </div>
+      <div class="app-grid" id="gamesGrid"></div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <button class="close">&times;</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <p>© 2026 Rodlof Studios · Rodlof Game Studio</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
