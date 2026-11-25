@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#3558f5">
+<meta name="description" content="Apps y juegos de Rodlof Studios y Rodlof Game Studio para descargar en Android.">
+<title>Rodlof Store · Apps y juegos para Android</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='9' fill='%233558f5'/><circle cx='25' cy='7' r='4' fill='%23d6286a'/><text x='15' y='24' font-size='21' font-weight='800' text-anchor='middle' fill='white' font-family='sans-serif'>R</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="/"><span class="mark">R</span>Rodlof Store</a>
+  <label class="search">
+    <span class="sr">Buscar apps o juegos</span>
+    <input type="search" id="q" placeholder="Buscar apps o juegos" autocomplete="off">
+  </label>
+  <button class="btn admin-only" data-open="upload" data-kind="app">Publicar app</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>Apps y juegos de Rodlof, listos para instalar.</h1>
+      <p class="lead">Descarga el APK y ábrelo en tu Android.</p>
+      <p class="count" id="count"></p>
+    </div>
+    <aside id="spotlight" aria-label="Última subida"></aside>
+  </section>
+
+  <div class="filters">
+    <div class="seg" role="group" aria-label="Tipo">
+      <button aria-pressed="true" data-type="all">Todo</button>
+      <button aria-pressed="false" data-type="app">Apps</button>
+      <button aria-pressed="false" data-type="game">Juegos</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div id="catalog"><p class="empty">Cargando catálogo…</p></div>
+  <p class="sr" id="status" aria-live="polite"></p>
+</main>
+
+<footer>&copy; 2026 Rodlof Studios y Rodlof Game Studio<br><button class="link guest" data-open="admin">Administrador</button><button class="link admin-only" data-logout>Cerrar sesión de administrador</button></footer>
+
+<dialog id="detail"><div class="sheet"><button class="x" data-close aria-label="Cerrar">&times;</button><div id="detailBody"></div></div></dialog>
+
+<dialog id="upload">
+  <form class="sheet" id="uploadForm">
+    <button type="button" class="x" data-close aria-label="Cerrar">&times;</button>
+    <h2>Publicar una app</h2>
+    <p class="muted">Sube primero el APK a tu repositorio de GitHub (Releases) y pega aquí su enlace.</p>
+    <div class="pick" role="radiogroup" aria-label="Tipo">
+      <label data-kind="app"><input type="radio" name="type" value="app" checked><span>App</span></label>
+      <label data-kind="game"><input type="radio" name="type" value="game"><span>Juego</span></label>
+    </div>
+    <label>Nombre<input name="name" required></label>
+    <div class="two">
+      <label>Desarrollador<input name="developer" value="Rodlof Studios"></label>
+      <label>Categoría<input name="category" placeholder="Música, Acción…"></label>
+    </div>
+    <label>Descripción<textarea name="description" rows="3"></textarea></label>
+    <label>Enlace de descarga del APK<input type="url" name="apkUrl" required placeholder="https://github.com/…/releases/download/…/app.apk"></label>
+    <label>Enlace de la imagen (opcional)<input type="url" name="imageUrl" placeholder="https://…"></label>
+    <div class="two">
+      <label>Emoji alternativo<input name="icon" value="📱" maxlength="8"></label>
+      <label>Tamaño en MB (opcional)<input type="number" name="sizeMb" min="0" step="0.1"></label>
+    </div>
+    <button class="btn" id="submitBtn" data-kind="app">Publicar app</button>
+    <p id="uploadStatus" role="status"></p>
+  </form>
+</dialog>
+
+<dialog id="admin"><form class="sheet" id="adminForm"><button type="button" class="x" data-close aria-label="Cerrar">&times;</button><h2>Acceso de administrador</h2><p class="muted">Con tu clave podrás publicar apps y eliminar apps o reseñas.</p><label>Clave<input type="password" name="token" required autocomplete="current-password"></label><button class="btn" data-kind="app">Entrar</button><p id="adminStatus" role="status"></p></form></dialog>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="script.js"></script>
+</body>
+</html>
